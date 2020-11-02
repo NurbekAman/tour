@@ -1,0 +1,88 @@
+swagger: '2.0'
+info:
+  description: NodeJS-AWS-BE API
+  version: 1.0.0
+  title: NodeJS-AWS-BE API
+  # put the contact info for your development or API team
+  contact:
+    email: nurbek.it@gmail.com
+
+# tags are used for organizing operations
+tags:
+  - name: developers
+    description: Operations available to regular developers
+
+paths:
+  /products:
+    get:
+      tags:
+        - developers
+      summary: get all products
+      operationId: getProducts
+      description: 'Returns all product list'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: product list
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Product'
+
+  /product/{productId}:
+    get:
+      tags:
+        - developers
+      summary: get specific product by id
+      operationId: getProductById
+      description: 'Returns specific product by product id'
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: productId
+          description: product id, required parameter
+          required: true
+          type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/Product'
+        404:
+          description: product not found
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Product not found
+definitions:
+  Product:
+    type: object
+    required:
+      - id
+      - title
+      - price
+      - description
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: 1
+      title:
+        type: string
+        example: Mega
+      price:
+        type: number
+        example: 2
+      description:
+        type: string
+        example: Mega tron
+
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /Neythalion/NodeJS/1.0.0
+schemes:
+  - https

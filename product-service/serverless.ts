@@ -12,6 +12,18 @@ const serverlessConfiguration: Serverless = {
     webpack: {
       webpackConfig: './webpack.config.js',
       includeModules: true
+    },
+    documentation: {
+      version: 1,
+      title: 'Product Service API',
+      description: "This is API of product-service",
+      models: [
+        {
+          name: 'ErrorResponse',
+          description: 'This is an error',
+          contentType: 'application/json'
+        }
+      ]
     }
   },
   // Add the serverless-webpack plugin
