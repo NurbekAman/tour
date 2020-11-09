@@ -11,7 +11,8 @@ export const addProduct: APIGatewayProxyHandler = async (event) => {
 
   let response;
   try {
-    const result = await insertProducts(body);
+    console.log(body, 'body');
+    const result = await insertProducts(JSON.parse(body));
 
     response = formatResponse({ status: STATUS_CODE.SUCCESS, body: result });
   } catch (err) {
