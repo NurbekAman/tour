@@ -37,15 +37,7 @@ module.exports = {
           transpileOnly: true,
           experimentalWatchApi: true,
         },
-      },
-      {
-        test: /\.(js|ts)$/,
-        loader: "babel-loader",
-        options: {
-          transpileOnly: true,
-          experimentalWatchApi: true,
-        },
-      },
+      }
     ],
   },
   plugins: [

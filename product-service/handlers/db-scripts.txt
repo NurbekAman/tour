@@ -1,0 +1,33 @@
+create table products (
+	id uuid primary key default uuid_generate_v4(),
+	title text not null,
+	description text,
+	price integer check (price > 0)
+)
+
+create table stocks (
+	id uuid primary key default uuid_generate_v4(),
+	product_id uuid,
+	count integer,
+	foreign key ("product_id") references "products" ("id")
+)
+
+insert into products (title, description, price) values
+('Son-kol', 'tour around the son-kol', 2334),
+('Issykkul', 'tour around the issykkul', 3500)
+
+insert into stocks (product_id, count) values
+('ba8c1690-c57c-498f-8dbb-1c3062883eeb', 5),
+('e36da56c-80eb-46ca-b578-89faf798f4e0', 10)
+
+select * from products;
+
+select * from stocks s2
+inner join products p2
+on s2.product_id = p2.id
+where s2.product_id = 'ba8c1690-c57c-498f-8dbb-1c3062883eeb';
+
+insert into products (title, description, price) values
+
+
+create extension if not exists "uuid-ossp";

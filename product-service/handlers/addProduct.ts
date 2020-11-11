@@ -1,14 +1,18 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import 'source-map-support/register.js';
+import get from 'lodash/get';
 
 import { formatResponse } from '../services/formatResponse'
 import { STATUS_CODE } from '../services/constant';
-import { invokeProducts } from '../services/invokeProducts';
+import { insertProducts } from '../services/insertProducts';
 
-export const getProductList: APIGatewayProxyHandler = async () => {
+export const addProduct: APIGatewayProxyHandler = async (event) => {
+  const body = get(event, 'body');
+
   let response;
   try {
-    const result = await invokeProducts();
+    console.log(body, 'body');
+    const result = await insertProducts(JSON.parse(body));
 
     response = formatResponse({ status: STATUS_CODE.SUCCESS, body: result });
   } catch (err) {
