@@ -31,8 +31,27 @@ class ApiS3 {
         s3Stream.pipe(csv())
         .on('data', (data: any) => { results.push(data) })
         .on('error', (err) => { reject(err); } )
-        .on('end', () => { console.log(results, 'results'); resolve(results) });
+        .on('end', () => {
+          resolve(results)
+        });
       });
+      await this.s3
+        .copyObject({
+          Bucket: this.bucket,
+          CopySource: this.bucket + '/' + path,
+          Key: `parsed/${path.replace(
+            'uploaded/',
+            ''
+          )}`,
+        })
+        .promise();
+
+      await this.s3
+        .deleteObject({
+          Bucket: this.bucket,
+          Key: path,
+        })
+        .promise();
       return data;
     } catch (err) {
       console.log(err, 'error');
