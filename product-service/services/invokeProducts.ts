@@ -8,6 +8,7 @@ export const invokeProducts = async () => {
 
   try {
     const productResult = await client.query(queryGetProducts());
+    console.log('product from db', productResult);
     return handleDBResponse(productResult);
   } catch (err) {
     console.log("Error during database request executing", err);

@@ -12,6 +12,10 @@ module.exports = {
     extensions: ['.mjs', '.json', '.ts'],
     symlinks: false,
     cacheWithContext: false,
+    alias: {
+      services: path.resolve(__dirname, 'services/'),
+      handlers: path.resolve(__dirname, 'handlers/')
+    }
   },
   output: {
     libraryTarget: 'commonjs',
