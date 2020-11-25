@@ -1,4 +1,4 @@
-import { STATUS } from './constan';
+import { STATUS } from './constant';
 
 interface FormatResponse {
   status: number;
@@ -26,7 +26,7 @@ class FormatResponse {
     };
   }
 
-  success(body: any) {
+  success(body: any | null) {
     return this.format(body, STATUS.SUCCESS);
   }
 

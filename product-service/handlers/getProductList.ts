@@ -9,7 +9,7 @@ export const getProductList: APIGatewayProxyHandler = async () => {
   let response;
   try {
     const result = await invokeProducts();
-
+    console.log('response result', result);
     response = formatResponse({ status: STATUS_CODE.SUCCESS, body: result });
   } catch (err) {
     response = formatResponse({ status: STATUS_CODE.FATAL_ERROR, body: err })

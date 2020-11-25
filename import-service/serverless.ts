@@ -1,7 +1,7 @@
 import type { Serverless } from 'serverless/aws';
 
 const S3BUCKET = 'tour-upload';
-
+// const SQSQueue =
 const serverlessConfiguration: Serverless = {
   service: {
     name: S3BUCKET,
@@ -27,10 +27,18 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SQS_URL: {
+        Ref: 'SQSQueue'
+      },
+      SNS_ARN: {
+        Ref: 'SNSTopic'
+      }
     },
     iamRoleStatements: [
       { Effect: 'Allow', Action: 's3:ListBucket', Resource: 'arn:aws:s3:::tour-upload' },
-      { Effect: 'Allow', Action: 's3:*', Resource: 'arn:aws:s3:::tour-upload/*' }
+      { Effect: 'Allow', Action: 's3:*', Resource: 'arn:aws:s3:::tour-upload/*' },
+      { Effect: 'Allow', Action: 'sqs:*', Resource: { 'Fn::GetAtt': ['SQSQueue', 'Arn'] } },
+      { Effect: 'Allow', Action: 'sns:*', Resource: { Ref: 'SNSTopic' } }
     ]
   },
   functions: {
@@ -70,7 +78,46 @@ const serverlessConfiguration: Serverless = {
         }
       ]
 
+    },
+    catalogBatchProcess: {
+      handler: 'handler.catalogBatchProcess',
+      events: [
+        {
+          sqs: {
+            batchSize: 5,
+            arn: {
+              'Fn::GetAtt': ['SQSQueue', 'Arn']
+            }
+          }
+        }
+      ]
     }
+  },
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'catalogItemsQueue'
+        }
+      },
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'catalogItemsQueueTopic'
+        }
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'nurbek.it@gmail.com',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic'
+          }
+        }
+      }
+    },
   }
 }
 

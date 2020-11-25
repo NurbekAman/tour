@@ -11,8 +11,11 @@ export const addProduct: APIGatewayProxyHandler = async (event) => {
 
   let response;
   try {
-    console.log(body, 'body');
-    const result = await insertProducts(JSON.parse(body));
+    const product = JSON.parse(body);
+    const productList = Array.isArray(product) ? product : [product];
+
+    console.log('next product list come', productList);
+    const result = await insertProducts(productList);
 
     response = formatResponse({ status: STATUS_CODE.SUCCESS, body: result });
   } catch (err) {
