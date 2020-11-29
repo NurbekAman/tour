@@ -14,6 +14,9 @@ const serverlessConfiguration: Serverless = {
     webpack: {
       webpackConfig: './webpack.config.js',
       includeModules: true
+    },
+    BasicAuthorizationArn: {
+      'Fn::ImportValue': 'BasicAuthorizationArn',
     }
   },
   // Add the serverless-webpack plugin
@@ -55,6 +58,13 @@ const serverlessConfiguration: Serverless = {
                   file: true
                 }
               }
+            },
+            authorizer: {
+              name: 'basicAuthorization',
+              arn: '${self:custom.BasicAuthorizationArn}',
+              resultTtlInSeconds: 0,
+              identitySource: 'method.request.header.Authorization',
+              type: 'token'
             }
           }
         }
@@ -115,6 +125,32 @@ const serverlessConfiguration: Serverless = {
           TopicArn: {
             Ref: 'SNSTopic'
           }
+        }
+      },
+      GatewayResponseAccessDenied: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          },
+          ResponseType: 'ACCESS_DENIED',
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+        }
+      },
+      GatewayResponseUnauthorized: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          },
+          ResponseType: 'UNAUTHORIZED',
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
         }
       }
     },
