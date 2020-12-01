@@ -1,5 +1,5 @@
-import { basicAuthorization } from './handlers';
+import { basicAuthorizer } from './handlers';
 
 export {
-  basicAuthorization
+  basicAuthorizer
 };

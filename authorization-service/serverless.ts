@@ -30,19 +30,19 @@ const serverlessConfiguration: Serverless = {
   resources: {
     Resources: {},
     Outputs: {
-      BasicAuthorizationARN: {
+      BasicAuthorizerARN: {
         Value: {
-          'Fn::GetAtt': ['BasicAuthorizationLambdaFunction', 'Arn']
+          'Fn::GetAtt': ['BasicAuthorizerLambdaFunction', 'Arn']
         },
         Export: {
-          Name: 'BasicAuthorizationArn',
+          Name: 'BasicAuthorizerARN',
         }
       }
     }
   },
   functions: {
-    basicAuthorization: {
-      handler: 'handler.basicAuthorization',
+    basicAuthorizer: {
+      handler: 'handler.basicAuthorizer',
     }
   }
 }

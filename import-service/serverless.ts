@@ -15,8 +15,8 @@ const serverlessConfiguration: Serverless = {
       webpackConfig: './webpack.config.js',
       includeModules: true
     },
-    BasicAuthorizationArn: {
-      'Fn::ImportValue': 'BasicAuthorizationArn',
+    basicAuthorizerArn: {
+      'Fn::ImportValue': 'BasicAuthorizerARN',
     }
   },
   // Add the serverless-webpack plugin
@@ -44,6 +44,71 @@ const serverlessConfiguration: Serverless = {
       { Effect: 'Allow', Action: 'sns:*', Resource: { Ref: 'SNSTopic' } }
     ]
   },
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'catalogItemsQueue'
+        }
+      },
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'catalogItemsQueueTopic'
+        }
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'nurbek.it@gmail.com',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic'
+          }
+        }
+      },
+      GatewayResponseDefault400: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'DEFAULT_4XX',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi',
+          },
+        },
+      },
+      GatewayResponseAccessDenied: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          },
+          ResponseType: 'ACCESS_DENIED',
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+        }
+      },
+      GatewayResponseUnauthorized: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          },
+          ResponseType: 'UNAUTHORIZED',
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+        }
+      }
+    },
+  },
   functions: {
     importProductsFile: {
       handler: 'handler.importProductsFile',
@@ -52,6 +117,7 @@ const serverlessConfiguration: Serverless = {
           http: {
             method: 'get',
             path: 'import',
+            cors: true,
             request: {
               parameters: {
                 paths: {
@@ -60,8 +126,8 @@ const serverlessConfiguration: Serverless = {
               }
             },
             authorizer: {
-              name: 'basicAuthorization',
-              arn: '${self:custom.BasicAuthorizationArn}',
+              name: 'basicAuthorizer',
+              arn: '${self:custom.basicAuthorizerArn}',
               resultTtlInSeconds: 0,
               identitySource: 'method.request.header.Authorization',
               type: 'token'
@@ -102,58 +168,6 @@ const serverlessConfiguration: Serverless = {
         }
       ]
     }
-  },
-  resources: {
-    Resources: {
-      SQSQueue: {
-        Type: 'AWS::SQS::Queue',
-        Properties: {
-          QueueName: 'catalogItemsQueue'
-        }
-      },
-      SNSTopic: {
-        Type: 'AWS::SNS::Topic',
-        Properties: {
-          TopicName: 'catalogItemsQueueTopic'
-        }
-      },
-      SNSSubscription: {
-        Type: 'AWS::SNS::Subscription',
-        Properties: {
-          Endpoint: 'nurbek.it@gmail.com',
-          Protocol: 'email',
-          TopicArn: {
-            Ref: 'SNSTopic'
-          }
-        }
-      },
-      GatewayResponseAccessDenied: {
-        Type: 'AWS::ApiGateway::GatewayResponse',
-        Properties: {
-          RestApiId: {
-            Ref: 'ApiGatewayRestApi'
-          },
-          ResponseType: 'ACCESS_DENIED',
-          ResponseParameters: {
-            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
-            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
-          },
-        }
-      },
-      GatewayResponseUnauthorized: {
-        Type: 'AWS::ApiGateway::GatewayResponse',
-        Properties: {
-          RestApiId: {
-            Ref: 'ApiGatewayRestApi'
-          },
-          ResponseType: 'UNAUTHORIZED',
-          ResponseParameters: {
-            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
-            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
-          },
-        }
-      }
-    },
   }
 }
 
