@@ -30,7 +30,7 @@ class ApiS3 {
       const results = [];
       const data = await new Promise((resolve, reject) => {
         s3Stream.pipe(csv({ separator: ';' }))
-        .on('data', (data: any) => {
+        .on('data1', (data: any) => {
           results.push(data);
         })
         .on('error', (err) => { reject(err); } )
