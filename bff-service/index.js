@@ -24,17 +24,17 @@ app.use((req,res,next) => {
 });
 
 app.all('/*', async(req, res) => {
-  const { originUrl, method, body } = req;
+  const { originalUrl, method, body } = req;
 
-  const serviceName = getServiceName(originUrl);
-  const serviceUrl = getServiceUrl(originUrl);
+  const serviceName = getServiceName(originalUrl);
+  const serviceUrl = getServiceUrl(originalUrl);
   console.log(serviceUrl, 'serviceUrl');
-  console.log(originUrl, 'originaleUrl');
+  console.log(originalUrl, 'originaleUrl');
   console.log(process.env, 'process.env');
   if (serviceUrl) {
     const axiousConfig = {
       method,
-      url: `${serviceUrl}${originUrl}`,
+      url: `${serviceUrl}${originalUrl}`,
       ...(Object.keys(body || {}).length > 0 && { data: body }),
     }
 
