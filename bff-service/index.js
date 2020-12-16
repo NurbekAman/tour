@@ -1,9 +1,8 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import { Method } from 'axios';
-import { StatusCodes } from 'http-status-codes';
+const express = require('express');
+const dotenv = require('dotenv');
+const { StatusCodes } = require('http-status-codes');
 
-import { getServiceName, getServiceUrl } from './src/utils';
+const { getServiceName, getServiceUrl } = require('./src/utils');
 
 dotenv.config({
   path: '.env'
@@ -29,7 +28,9 @@ app.all('/*', async(req, res) => {
 
   const serviceName = getServiceName(originUrl);
   const serviceUrl = getServiceUrl(originUrl);
-
+  console.log(serviceUrl, 'serviceUrl');
+  console.log(originUrl, 'originaleUrl');
+  console.log(process.env, 'process.env');
   if (serviceUrl) {
     const axiousConfig = {
       method,
