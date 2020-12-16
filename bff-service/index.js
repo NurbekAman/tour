@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const axios = require('axios').default;
 const { StatusCodes } = require('http-status-codes');
 
 const { getServiceName, getServiceUrl } = require('./src/utils');
