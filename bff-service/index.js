@@ -27,11 +27,8 @@ app.use((req,res,next) => {
 app.all('/*', async(req, res) => {
   const { originalUrl, method, body } = req;
 
-  const serviceName = getServiceName(originalUrl);
   const serviceUrl = getServiceUrl(originalUrl);
-  console.log(serviceUrl, 'serviceUrl');
-  console.log(originalUrl, 'originaleUrl');
-  console.log(process.env, 'process.env');
+
   if (serviceUrl) {
     const axiousConfig = {
       method,
